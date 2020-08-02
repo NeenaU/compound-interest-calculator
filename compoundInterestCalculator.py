@@ -6,23 +6,29 @@ class interestCalculator():
         self.master = master
         master.title = ("Compound Interest Calculator")
 
+        #Configure column size
+        master.grid_columnconfigure(0, weight=1)
+        master.grid_columnconfigure(1, weight=1)
+        master.grid_columnconfigure(2, weight=5)
+        master.grid_columnconfigure(3, weight=5)
+
         #Title
-        self.titleLabel = tk.Label(text="Compound Interest Calculator", font=("Times",16)).grid(sticky='W',columnspan=15,pady=10)
+        self.titleLabel = tk.Label(text="Compound Interest Calculator", font=("Times",16)).grid(row=0,column=0,sticky='EW',columnspan=3,pady=15)
 
         #Options
-        self.initialAmountLabel = tk.Label(text="Initial Amount").grid(sticky='W')
-        self.initialAmountSign = tk.Label(text="£").grid(sticky='W',row=2,column=0)
-        self.initialAmountEntry = tk.Entry(master, width=8).grid(row=2,column=1,sticky='W')
+        self.initialAmountLabel = tk.Label(master,text="Initial Amount (£)").grid(sticky='W')
+        self.initialAmountEntry = tk.Entry(master, width=8)
+        self.initialAmountEntry.grid(sticky='W')
 
-        self.interestRateLabel = tk.Label(text="Yearly Interest Rate").grid(sticky='W')
+        self.interestRateLabel = tk.Label(text="Yearly Interest Rate (%)").grid(sticky='W')
         self.interestRateEntry = tk.Entry(master, width=3).grid(sticky='W')
-        self.interestRateSign = tk.Label(text="%").grid(row=4,column=1,sticky='W')
 
         self.calcPeriodLabel = tk.Label(text="Calculation Period").grid(sticky='W')
-        self.yearsEntry = tk.Entry(master, width=3).grid(sticky='W')
-        self.yearsLabel = tk.Label(text="years").grid(sticky='W')
-        self.monthsEntry = tk.Entry(master, width=3).grid(sticky='W')
-        self.monthsLabel = tk.Label(text="months").grid(sticky='W')
+        self.calcPeriodFrame = tk.Frame(master).grid(sticky='W')
+        self.yearsEntry = tk.Entry(self.calcPeriodFrame, width=3)
+        self.yearsLabel = tk.Label(self.calcPeriodFrame, text="years")
+        self.monthsEntry = tk.Entry(self.calcPeriodFrame, width=3)
+        self.monthsLabel = tk.Label(self.calcPeriodFrame, text="months")
         
         self.compoundIntervalLabel = tk.Label(text="Compound Interval").grid(sticky='W')
         self.compoundDefaultVal = tk.StringVar(master)
