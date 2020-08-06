@@ -10,13 +10,14 @@ class interestCalculator():
         #Title
         self.titleLabel = tk.Label(text="Compound Interest Calculator", font=("Times",16), width=24).grid(row=0,column=0,sticky='EW',pady=15)
 
-        #Options
+        #Option widgets
         self.initialAmountLabel = tk.Label(master, text="Initial Amount").grid(sticky='W')
         self.initialAmountFrame = tk.Frame(master)  #widgets are placed side by side in a frame
         self.initialAmountFrame.grid(row=2,sticky='NW',pady=6)
         self.poundSign1 = tk.Label(self.initialAmountFrame, text="£")
         self.poundSign1.grid(row=0,column=0)
-        self.initialAmount =tk.IntVar()
+        self.initialAmount = tk.IntVar()
+        self.initialAmount.trace("w", self.initialAmountEntryClick)
         self.initialAmountEntry = tk.Entry(self.initialAmountFrame, textvariable=self.initialAmount, width=8)
         self.initialAmountEntry.grid(row=0,column=1)
         self.initialAmountEntry.bind("<1>", self.initialAmountEntryClick)
@@ -25,6 +26,7 @@ class interestCalculator():
         self.interestRateFrame = tk.Frame(master)
         self.interestRateFrame.grid(row=4,sticky='NW',pady=6)
         self.interestRate = tk.IntVar()
+        self.interestRate.trace("w", self.interestRateEntryClick)
         self.interestRateEntry = tk.Entry(self.interestRateFrame, textvariable=self.interestRate, width=3)
         self.interestRateEntry.grid(row=0,column=0,padx=4)
         self.interestRateEntry.bind("<1>", self.interestRateEntryClick)
@@ -36,11 +38,13 @@ class interestCalculator():
         self.calcPeriodFrame.grid(row=6,sticky='NW',pady=6)
         
         self.years = tk.IntVar()
+        self.years.trace("w", self.yearsEntryClick)
         self.yearsEntry = tk.Entry(self.calcPeriodFrame, textvariable=self.years, width=3)
         self.yearsEntry.bind("<1>", self.yearsEntryClick)
         self.yearsLabel = tk.Label(self.calcPeriodFrame, text="years")
         
         self.months = tk.IntVar()
+        self.months.trace("w", self.monthsEntryClick)
         self.monthsEntry = tk.Entry(self.calcPeriodFrame, textvariable=self.months, width=3)
         self.monthsEntry.bind("<1>", self.monthsEntryClick)
         self.monthsLabel = tk.Label(self.calcPeriodFrame, text="months")
@@ -60,6 +64,7 @@ class interestCalculator():
         self.amountLabel = tk.Label(self.regularAmountFrame, text="Amount:")
         self.poundSign2 = tk.Label(self.regularAmountFrame, text="£")
         self.regularAmount = tk.IntVar()
+        self.regularAmount.trace("w", self.regularAmountEntryClick)
         self.regularAmountEntry = tk.Entry(self.regularAmountFrame, textvariable=self.regularAmount, width=8)
         self.regularAmountEntry.bind("<1>", self.regularAmountEntryClick)
 
@@ -72,6 +77,7 @@ class interestCalculator():
         self.increaseDepositsChoice.grid(row=0,column=0)                                                                                                            #if yes is selected, the label, entry and % sign will become visible
         self.annualInflationLabel = tk.Label(self.increaseDepositsFrame, text="Annual inflation rate:")
         self.annualInflation = tk.IntVar()
+        self.annualInflation.trace("w", self.annualInflationEntryClick)
         self.annualInflationEntry = tk.Entry(self.increaseDepositsFrame, textvariable=self.annualInflation, width=3)
         self.annualInflationEntry.bind("<1>", self.annualInflationEntryClick)
         self.percentSign2 = tk.Label(self.increaseDepositsFrame, text="%")
@@ -198,27 +204,27 @@ class interestCalculator():
             return
 
     #These 6 functions change the background of an entry back to white when the user clicks on or types in it
-    def initialAmountEntryClick(self, event):
+    def initialAmountEntryClick(self, *args):
         if self.initialAmountEntry['bg'] == '#D54323':
             self.initialAmountEntry.configure(bg='#FFFFFF')
 
-    def interestRateEntryClick(self, event):
+    def interestRateEntryClick(self, *args):
         if self.interestRateEntry['bg'] == '#D54323':
             self.interestRateEntry.configure(bg='#FFFFFF')
 
-    def yearsEntryClick(self, event):
+    def yearsEntryClick(self, *args):
         if self.yearsEntry['bg'] == '#D54323':
             self.yearsEntry.configure(bg='#FFFFFF')
 
-    def monthsEntryClick(self, event):
+    def monthsEntryClick(self, *args):
         if self.monthsEntry['bg'] == '#D54323':
             self.monthsEntry.configure(bg='#FFFFFF')
 
-    def regularAmountEntryClick(self, event):
+    def regularAmountEntryClick(self, *args):
         if self.regularAmountEntry['bg'] == '#D54323':
             self.regularAmountEntry.configure(bg='#FFFFFF')
 
-    def annualInflationEntryClick(self, event):
+    def annualInflationEntryClick(self, *args):
         if self.annualInflationEntry['bg'] == '#D54323':
             self.annualInflationEntry.configure(bg='#FFFFFF')
 
