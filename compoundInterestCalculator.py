@@ -26,7 +26,7 @@ class interestCalculator():
         self.interestRateFrame.grid(row=4,sticky='NW',pady=6)
         self.interestRate = tk.IntVar()
         self.interestRateEntry = tk.Entry(self.interestRateFrame, textvariable=self.interestRate, width=3)
-        self.interestRateEntry.grid(row=0,column=0)
+        self.interestRateEntry.grid(row=0,column=0,padx=4)
         self.interestRateEntry.bind("<1>", self.interestRateEntryClick)
         self.percentSign1 = tk.Label(self.interestRateFrame, text="%")
         self.percentSign1.grid(row=0,column=1)
@@ -45,9 +45,9 @@ class interestCalculator():
         self.monthsEntry.bind("<1>", self.monthsEntryClick)
         self.monthsLabel = tk.Label(self.calcPeriodFrame, text="months")
 
-        self.yearsEntry.grid(row=0,column=0)
+        self.yearsEntry.grid(row=0,column=0,padx=4)
         self.yearsLabel.grid(row=0,column=1)
-        self.monthsEntry.grid(row=0,column=2)
+        self.monthsEntry.grid(row=0,column=2,padx=4)
         self.monthsLabel.grid(row=0,column=3)
 
         self.regularAmountLabel = tk.Label(text="Regular deposit/withdrawal").grid(sticky='W')
