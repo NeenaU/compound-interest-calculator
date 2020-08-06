@@ -33,26 +33,25 @@ class interestCalculator():
         self.percentSign1 = tk.Label(self.interestRateFrame, text="%")
         self.percentSign1.grid(row=0,column=1)
 
-        self.calcPeriodLabel = tk.Label(text="Calculation Period").grid(sticky='W')
-        self.calcPeriodFrame = tk.Frame(master)
-        self.calcPeriodFrame.grid(row=6,sticky='NW',pady=6)
-        
-        self.years = tk.IntVar()
-        self.years.trace("w", self.yearsEntryClick)
-        self.yearsEntry = tk.Entry(self.calcPeriodFrame, textvariable=self.years, width=3)
-        self.yearsEntry.bind("<1>", self.yearsEntryClick)
-        self.yearsLabel = tk.Label(self.calcPeriodFrame, text="years")
-        
-        self.months = tk.IntVar()
-        self.months.trace("w", self.monthsEntryClick)
-        self.monthsEntry = tk.Entry(self.calcPeriodFrame, textvariable=self.months, width=3)
-        self.monthsEntry.bind("<1>", self.monthsEntryClick)
-        self.monthsLabel = tk.Label(self.calcPeriodFrame, text="months")
+        self.timePeriodLabel = tk.Label(text="Time Period").grid(sticky='W')
+        self.timePeriodFrame = tk.Frame(master)
+        self.timePeriodFrame.grid(row=6,sticky='NW',pady=6)
+        self.timePeriod = tk.IntVar()
+        self.timePeriod.trace("w", self.timePeriodEntryClick)
+        self.timePeriodEntry = tk.Entry(self.timePeriodFrame, textvariable=self.timePeriod, width=3)
+        self.timePeriodEntry.bind("<1>", self.timePeriodEntryClick)
+        self.timePeriodVar = tk.StringVar(master)
+        self.timePeriodVar.set("years")
+        self.timePeriodChoice = tk.OptionMenu(self.timePeriodFrame, self.timePeriodVar, "years", "months")
+        self.timePeriodChoice.grid(row=0,column=0)    
+        self.timePeriodEntry.grid(row=0,column=0,padx=4)
+        self.timePeriodChoice.grid(row=0,column=1)
 
-        self.yearsEntry.grid(row=0,column=0,padx=4)
-        self.yearsLabel.grid(row=0,column=1)
-        self.monthsEntry.grid(row=0,column=2,padx=4)
-        self.monthsLabel.grid(row=0,column=3)
+        self.compoundIntervalLabel = tk.Label(text="Compound Interval").grid(sticky='W')
+        self.compoundIntervalVar = tk.StringVar(master)
+        self.compoundIntervalVar.set("yearly")
+        self.compoundIntervalChoice = tk.OptionMenu(master, self.compoundIntervalVar, "yearly", "monthly", "weekly", "daily")
+        self.compoundIntervalChoice.grid(sticky='W',pady=6)
 
         self.regularAmountLabel = tk.Label(text="Regular deposit/withdrawal").grid(sticky='W')
         self.regularAmountFrame = tk.Frame(master)
@@ -87,7 +86,9 @@ class interestCalculator():
         self.resultLabel = tk.Label(master, text="").grid(sticky='W')
         self.calculateAgainButton= tk.Button(master, text="Calculate Again", command=self.reset)
 
-    #checkRegularAmount and checkIncreaseDeposits
+##ERROR HANDLING FOR DIFFERENT TIME PERIODS
+
+    #checkRegularAmount, checkIncreaseDeposits and checkTimePeriod
     #add extra widgets onto the screen if the menuoption variable is yes
     #remove the extra widgets if not
     def checkRegularAmount(self, value):
@@ -134,11 +135,11 @@ class interestCalculator():
             return
             
         try:
-            self.years.get()
+            self.timePeriod.get()
         except:
             messagebox.showerror("Error", "Enter a number for the number of years")
-            self.years.set(0)
-            self.yearsEntry.configure(bg='#D54323')
+            self.timePeriod.set(0)
+            self.timePeriodEntry.configure(bg='#D54323')
             return
 
         try:
@@ -169,10 +170,8 @@ class interestCalculator():
         try:
             if self.initialAmount.get() > 0:
 
-                if self.years.get() >= 0:
-
-                    if self.months.get() >= 0 and self.months.get() <=12 :
-
+                if self.timePeriod.get() >= 0:
+                    
                         if self.regularAmount.get() >= 0:
                             self.calculateResult()
 
@@ -182,16 +181,10 @@ class interestCalculator():
                             self.regularAmountEntry.configure(bg='#D54323')
                             return
 
-                    else:
-                        messagebox.showerror("Error", "Enter a number greater than or equal to 0 and less than 12 for the number of months")
-                        self.months.set(0)
-                        self.monthsEntry.configure(bg='#D54323')
-                        return
-
                 else:
                     messagebox.showerror("Error", "Enter a number greater than or equal to 0 for the number of years")
-                    self.years.set(0)
-                    self.yearsEntry.configure(bg='#D54323')
+                    self.timePeriod.set(0)
+                    self.timePeriodEntry.configure(bg='#D54323')
                     return
                 
             else:
@@ -212,9 +205,9 @@ class interestCalculator():
         if self.interestRateEntry['bg'] == '#D54323':
             self.interestRateEntry.configure(bg='#FFFFFF')
 
-    def yearsEntryClick(self, *args):
-        if self.yearsEntry['bg'] == '#D54323':
-            self.yearsEntry.configure(bg='#FFFFFF')
+    def timePeriodEntryClick(self, *args):
+        if self.timePeriodEntry['bg'] == '#D54323':
+            self.timePeriodEntry.configure(bg='#FFFFFF')
 
     def monthsEntryClick(self, *args):
         if self.monthsEntry['bg'] == '#D54323':
@@ -231,13 +224,6 @@ class interestCalculator():
     def calculateResult(self):
         self.calculateButton.grid_forget()
         self.calculateAgainButton.grid(sticky='W')
-
-        self.initialAmountEntry.configure(bg='#FFFFFF')
-        self.interestRateEntry.configure(bg='#FFFFFF')
-        self.yearsEntry.configure(bg='#FFFFFF')
-        self.monthsEntry.configure(bg='#FFFFFF')
-        self.regularAmountEntry.configure(bg='#FFFFFF')
-        self.annualInflationEntry.configure(bg='#FFFFFF')
 
         #if self.regularAmountVar == "yes":
         #if self.increaseDepositsVar == "yes":
