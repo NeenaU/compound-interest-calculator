@@ -86,8 +86,6 @@ class interestCalculator():
         self.resultLabel = tk.Label(master, text="").grid(sticky='W')
         self.calculateAgainButton= tk.Button(master, text="Calculate Again", command=self.reset)
 
-##ERROR HANDLING FOR DIFFERENT TIME PERIODS
-
     #checkRegularAmount, checkIncreaseDeposits and checkTimePeriod
     #add extra widgets onto the screen if the menuoption variable is yes
     #remove the extra widgets if not
@@ -137,17 +135,9 @@ class interestCalculator():
         try:
             self.timePeriod.get()
         except:
-            messagebox.showerror("Error", "Enter a number for the number of years")
+            messagebox.showerror("Error", "Enter a number for the time period")
             self.timePeriod.set(0)
             self.timePeriodEntry.configure(bg='#D54323')
-            return
-
-        try:
-            self.months.get()
-        except:
-            messagebox.showerror("Error", "Enter a number for the number of months")
-            self.months.set(0)
-            self.monthsEntry.configure(bg='#D54323')
             return
 
         try:
@@ -170,8 +160,17 @@ class interestCalculator():
         try:
             if self.initialAmount.get() > 0:
 
-                if self.timePeriod.get() >= 0:
-                    
+                if (self.timePeriodVar == "years" and self.timePeriod.get() > 0) or (self.timePeriodVar == "months" and self.timePeriod.get() > 0):
+
+                    if self.timePeriodVar == "months" and self.timePeriod.get() > 12:
+
+                        messagebox.showerror("Error", "Enter a number less than 12 for the number of months")
+                        self.regularAmount.set(0)
+                        self.timePeriodEntry.configure(bg='#D54323')
+                        return
+                        
+                    else:
+                        
                         if self.regularAmount.get() >= 0:
                             self.calculateResult()
 
@@ -182,7 +181,7 @@ class interestCalculator():
                             return
 
                 else:
-                    messagebox.showerror("Error", "Enter a number greater than or equal to 0 for the number of years")
+                    messagebox.showerror("Error", "Enter a number greater than or equal to 0 for the time period")
                     self.timePeriod.set(0)
                     self.timePeriodEntry.configure(bg='#D54323')
                     return
@@ -224,6 +223,9 @@ class interestCalculator():
     def calculateResult(self):
         self.calculateButton.grid_forget()
         self.calculateAgainButton.grid(sticky='W')
+
+        #Number of times interest applied per time period
+        #n = 
 
         #if self.regularAmountVar == "yes":
         #if self.increaseDepositsVar == "yes":
