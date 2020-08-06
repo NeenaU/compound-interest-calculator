@@ -12,7 +12,7 @@ class interestCalculator():
 
         #Options
         self.initialAmountLabel = tk.Label(master, text="Initial Amount").grid(sticky='W')
-        self.initialAmountFrame = tk.Frame(master)  #widgets can be placed side by side in a frame
+        self.initialAmountFrame = tk.Frame(master)  #widgets are placed side by side in a frame
         self.initialAmountFrame.grid(row=2,sticky='NW',pady=6)
         self.poundSign1 = tk.Label(self.initialAmountFrame, text="£")
         self.poundSign1.grid(row=0,column=0)
@@ -81,6 +81,9 @@ class interestCalculator():
         self.resultLabel = tk.Label(master, text="").grid(sticky='W')
         self.calculateAgainButton= tk.Button(master, text="Calculate Again", command=self.reset)
 
+    #checkRegularAmount and checkIncreaseDeposits
+    #add extra widgets onto the screen if the menuoption variable is yes
+    #remove the extra widgets if not
     def checkRegularAmount(self, value):
         if value == "no":
             self.amountLabel.grid_forget()
@@ -103,8 +106,11 @@ class interestCalculator():
             self.annualInflationEntry.grid(row=0,column=2)
             self.percentSign2.grid(row=0,column=3)
 
+    #Verifies the values of all entry boxes
+    #If an error is found, the entry background becomes red
     def verifyValues(self):
 
+        #Verifying that values are ints
         try:
             self.initialAmount.get()
         except:
@@ -153,6 +159,7 @@ class interestCalculator():
             self.annualInflationEntry.configure(bg='#D54323')
             return
 
+        #Verifying that values are between/higher than a certain number(s) 
         try:
             if self.initialAmount.get() > 0:
 
@@ -190,6 +197,7 @@ class interestCalculator():
         except:
             return
 
+    #These 6 functions change the background of an entry back to white when the user clicks on or types in it
     def initialAmountEntryClick(self, event):
         if self.initialAmountEntry['bg'] == '#D54323':
             self.initialAmountEntry.configure(bg='#FFFFFF')
