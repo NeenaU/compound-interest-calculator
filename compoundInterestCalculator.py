@@ -160,9 +160,9 @@ class interestCalculator():
         try:
             if self.initialAmount.get() > 0:
 
-                if (self.timePeriodVar == "years" and self.timePeriod.get() > 0) or (self.timePeriodVar == "months" and self.timePeriod.get() > 0):
+                if (self.timePeriodVar.get() == "years" and self.timePeriod.get() > 0) or (self.timePeriodVar.get() == "months" and self.timePeriod.get() > 0):
 
-                    if self.timePeriodVar == "months" and self.timePeriod.get() > 12:
+                    if self.timePeriodVar.get() == "months" and self.timePeriod.get() > 12:
 
                         messagebox.showerror("Error", "Enter a number less than 12 for the number of months")
                         self.regularAmount.set(0)
@@ -223,12 +223,44 @@ class interestCalculator():
     def calculateResult(self):
         self.calculateButton.grid_forget()
         self.calculateAgainButton.grid(sticky='W')
+        print("A")
+
+        #Principal balance
+        p = self.initialAmount.get()
+        print(p)
+
+        #Interest rate
+        r = self.interestRate.get() / 100
+        print(r)
 
         #Number of times interest applied per time period
-        #n = 
+        if self.compoundIntervalVar.get() == "yearly":
+            n = 1
+        else:
+            n = 12
 
-        #if self.regularAmountVar == "yes":
-        #if self.increaseDepositsVar == "yes":
+        print(n)
+
+        #t = time periods elapsed
+        if self.timePeriodVar.get() == "years":
+            t = self.timePeriod.get()
+        else:
+            t = self.timePeriod.get() / 12
+
+        print(t)
+        print(self.regularAmountVar.get())
+
+        if self.regularAmountVar.get() == "no":
+            result = p * (1 + (r/n)) ** (n*t)
+            interestGained = result - p
+            
+
+        elif self.regularAmountVar.get() == "yes":
+            #if self.increaseDepositsVar == "yes":
+            #else:
+            print("B")
+
+        print("C")
             
 
     def calculateRegularDeposit(self):
