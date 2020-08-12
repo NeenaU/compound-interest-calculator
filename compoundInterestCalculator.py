@@ -53,7 +53,7 @@ class interestCalculator():
         self.compoundIntervalChoice = tk.OptionMenu(master, self.compoundIntervalVar, "yearly", "monthly", "weekly", "daily")
         self.compoundIntervalChoice.grid(sticky='W',pady=6)
 
-        self.regularAmountLabel = tk.Label(text="Regular deposit/withdrawal").grid(sticky='W')
+        self.regularAmountLabel = tk.Label(text="Regular monthly deposit/withdrawal").grid(sticky='W')
         self.regularAmountFrame = tk.Frame(master)
         self.regularAmountFrame.grid(row=10,sticky='NW',pady=6)
         self.regularAmountVar = tk.StringVar(master)
@@ -67,24 +67,11 @@ class interestCalculator():
         self.regularAmountEntry = tk.Entry(self.regularAmountFrame, textvariable=self.regularAmount, width=8)
         self.regularAmountEntry.bind("<1>", self.regularAmountEntryClick)
 
-        self.increaseDepositsLabel = tk.Label(text="Increase deposits in line with annual inflation?").grid(sticky='W')
-        self.increaseDepositsFrame = tk.Frame(master)
-        self.increaseDepositsFrame.grid(row=12,sticky='NW',pady=6)
-        self.increaseDepositsVar = tk.StringVar(master)
-        self.increaseDepositsVar.set("no")
-        self.increaseDepositsChoice = tk.OptionMenu(self.increaseDepositsFrame, self.increaseDepositsVar, "yes", "no", command=self.checkIncreaseDeposits)   #command called when an option is selected
-        self.increaseDepositsChoice.grid(row=0,column=0)                                                                                                            #if yes is selected, the label, entry and % sign will become visible
-        self.annualInflationLabel = tk.Label(self.increaseDepositsFrame, text="Annual inflation rate:")
-        self.annualInflation = tk.IntVar()
-        self.annualInflation.trace("w", self.annualInflationEntryClick)
-        self.annualInflationEntry = tk.Entry(self.increaseDepositsFrame, textvariable=self.annualInflation, width=3)
-        self.annualInflationEntry.bind("<1>", self.annualInflationEntryClick)
-        self.percentSign2 = tk.Label(self.increaseDepositsFrame, text="%")
-
         self.calculateButton = tk.Button(master, text="Calculate", command=self.verifyValues)
         self.calculateButton.grid(sticky='NW',pady=6)
-        self.resultLabel = tk.Label(master, text="").grid(sticky='W')
-        self.calculateAgainButton= tk.Button(master, text="Calculate Again", command=self.reset)
+        self.resultText = tk.Text(master, state='disabled', width=37, height=3)
+        self.resultText.grid(sticky='W')
+        self.calculateAgainButton= tk.Button(master, text="Reset", command=self.reset)
 
     #checkRegularAmount, checkIncreaseDeposits and checkTimePeriod
     #add extra widgets onto the screen if the menuoption variable is yes
@@ -99,17 +86,6 @@ class interestCalculator():
             self.amountLabel.grid(row=0,column=1)
             self.poundSign2.grid(row=0,column=2)
             self.regularAmountEntry.grid(row=0,column=3)
-
-    def checkIncreaseDeposits(self, value):
-        if value == "no":
-            self.annualInflationLabel.grid_forget()
-            self.annualInflationEntry.grid_forget()
-            self.percentSign2.grid_forget()
-            
-        else:
-            self.annualInflationLabel.grid(row=0,column=1)
-            self.annualInflationEntry.grid(row=0,column=2)
-            self.percentSign2.grid(row=0,column=3)
 
     #Verifies the values of all entry boxes
     #If an error is found, the entry background becomes red
@@ -146,14 +122,6 @@ class interestCalculator():
             messagebox.showerror("Error", "Enter a number for the regular deposit/withdrawal amount")
             self.regularAmount.set(0)
             self.regularAmountEntry.configure(bg='#D54323')
-            return
-
-        try:
-            self.annualInflation.get()
-        except:
-            messagebox.showerror("Error", "Enter a number for the annual inflation")
-            self.annualInflation.set(0)
-            self.annualInflationEntry.configure(bg='#D54323')
             return
 
         #Verifying that values are between/higher than a certain number(s) 
@@ -216,30 +184,25 @@ class interestCalculator():
         if self.regularAmountEntry['bg'] == '#D54323':
             self.regularAmountEntry.configure(bg='#FFFFFF')
 
-    def annualInflationEntryClick(self, *args):
-        if self.annualInflationEntry['bg'] == '#D54323':
-            self.annualInflationEntry.configure(bg='#FFFFFF')
-
     def calculateResult(self):
         self.calculateButton.grid_forget()
-        self.calculateAgainButton.grid(sticky='W')
-        print("A")
+        self.calculateAgainButton.grid(sticky='W',row=11,pady=6)
 
         #Principal balance
         p = self.initialAmount.get()
-        print(p)
 
         #Interest rate
         r = self.interestRate.get() / 100
-        print(r)
 
-        #Number of times interest applied per time period
+        #n = number of times interest applied per time period
         if self.compoundIntervalVar.get() == "yearly":
             n = 1
-        else:
+        elif self.compoundIntervalVar.get() == "monthly":
             n = 12
-
-        print(n)
+        elif self.compoundIntervalVar.get() == "weekly":
+            n = 52
+        elif self.compoundIntervalVar.get() == "daily":
+            n = 365
 
         #t = time periods elapsed
         if self.timePeriodVar.get() == "years":
@@ -247,31 +210,33 @@ class interestCalculator():
         else:
             t = self.timePeriod.get() / 12
 
-        print(t)
-        print(self.regularAmountVar.get())
-
         if self.regularAmountVar.get() == "no":
-            result = p * (1 + (r/n)) ** (n*t)
-            interestGained = result - p
-            
+            result = round(p * (1 + (r/n)) ** (n*t), 2)
 
-        elif self.regularAmountVar.get() == "yes":
-            #if self.increaseDepositsVar == "yes":
-            #else:
-            print("B")
+            if self.regularAmountVar.get() == "yes":
+                print(self.regularAmount.get() * ((((1 + (r/n)) ** (n*t)) - 1) / (r/n)))
+                result += round(self.regularAmount.get() * (((1 + (r/n)) ** (n*t) - 1) / (r/n)), 2)
 
-        print("C")
-            
+        print(result)
+        interestGained = round(result - p, 2)
+        print(interestGained)
+        self.resultText.configure(state='normal')
+        textForText = "You started with £" + p + "\n You ended with £" + result + "\n You gained £" + interestGained + "in interest"
+        self.resultText.insert(tk.INSERT, text=textForText)
+        self.resultText.configure(state='disabled')
+        self.resultText.grid(sticky='W')
 
-    def calculateRegularDeposit(self):
-        print("B")
-        
-    def calculateIncreasingDeposits(self):
-        print("C")
 
     def reset(self):
+        self.regularAmount.set(0)
+        self.timePeriod.set(0)
+        self.initialAmount.set(0)
+        self.timePeriodVar.set("years")
+        self.compoundIntervalVar.set("yearly")
         self.calculateButton.grid(row=13,sticky='W')
-        self.calculateAgainButton.grid_forget()
+        self.resultText.configure(state='normal')
+        self.resultText.delete(1.0, END)
+        self.resultText.configure(state='disabled')
 
 def main():
     window = tk.Tk()
