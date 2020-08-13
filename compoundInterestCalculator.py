@@ -218,15 +218,9 @@ class interestCalculator():
         if self.regularAmountVar.get() == "yes":
 
             timeInMonths = t*12
-            regAmount = self.regularAmount.get()
-            print(round(regAmount * ((1+r/n)**timeInMonths-1)/(r/n) * (1+r/n),2))
-            #print(round(regAmount*(((1+r/n)**timeInMonths - 1)/r/n),2))
-            #print(regAmount * (((1 + r/n) ** (n*timeInMonths) - 1) / (r/n)) * (1+r/n))
-            #result += round(regAmount * (((1 + r/n) ** (n*t) - 1) / (r/n)) * (1+r/n), 2)
-
-            result += round(regAmount*(((1+r)**n - 1)/r),2)
-            
-            earningsFromRegular = regAmount * timeInMonths
+            d = self.regularAmount.get()
+            result += round(d * (((1+(r/12))**(12*t)-1)/(r/12)) * (1+r/12),2)
+            earningsFromRegular = d * timeInMonths
             interestGained = round(result - p - earningsFromRegular, 2)
 
         else:
