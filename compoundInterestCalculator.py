@@ -53,7 +53,7 @@ class interestCalculator():
         self.compoundIntervalChoice = tk.OptionMenu(master, self.compoundIntervalVar, "yearly", "monthly", "weekly", "daily")
         self.compoundIntervalChoice.grid(sticky='W',pady=6)
 
-        self.regularAmountLabel = tk.Label(text="Regular monthly deposit/withdrawal").grid(sticky='W')
+        self.regularAmountLabel = tk.Label(text="Regular monthly deposit").grid(sticky='W')
         self.regularAmountFrame = tk.Frame(master)
         self.regularAmountFrame.grid(row=10,sticky='NW',pady=6)
         self.regularAmountVar = tk.StringVar(master)
@@ -119,14 +119,14 @@ class interestCalculator():
         try:
             self.regularAmount.get()
         except:
-            messagebox.showerror("Error", "Enter a number for the regular deposit/withdrawal amount")
+            messagebox.showerror("Error", "Enter a number for the regular deposit amount")
             self.regularAmount.set(0)
             self.regularAmountEntry.configure(bg='#D54323')
             return
 
         #Verifying that values are between/higher than a certain number(s) 
         try:
-            if self.initialAmount.get() > 0:
+            if self.initialAmount.get() >= 0:
 
                 if (self.timePeriodVar.get() == "years" and self.timePeriod.get() > 0) or (self.timePeriodVar.get() == "months" and self.timePeriod.get() > 0):
 
@@ -155,7 +155,7 @@ class interestCalculator():
                     return
                 
             else:
-                messagebox.showerror("Error", "Enter a number greater than 0 for the initial amount")
+                messagebox.showerror("Error", "Enter a number greater than or equal to 0 for the initial amount")
                 self.initialAmount.set(0)
                 self.initialAmountEntry.configure(bg='#D54323')
                 return
@@ -210,25 +210,39 @@ class interestCalculator():
         else:
             t = self.timePeriod.get() / 12
 
-        if self.regularAmountVar.get() == "no":
-            result = round(p * (1 + (r/n)) ** (n*t), 2)
+        #Calculate compound interest
+        result = round(p * (1 + (r/n)) ** (n*t), 2)
 
-            if self.regularAmountVar.get() == "yes":
-                print(self.regularAmount.get() * ((((1 + (r/n)) ** (n*t)) - 1) / (r/n)))
-                result += round(self.regularAmount.get() * (((1 + (r/n)) ** (n*t) - 1) / (r/n)), 2)
+        interestGained = 0
+        #Include amount made/lost from monthly deposits and calculate interest gained
+        if self.regularAmountVar.get() == "yes":
 
-        print(result)
-        interestGained = round(result - p, 2)
-        print(interestGained)
+            timeInMonths = t*12
+            regAmount = self.regularAmount.get()
+            print(round(regAmount * ((1+r/n)**timeInMonths-1)/(r/n) * (1+r/n),2))
+            #print(round(regAmount*(((1+r/n)**timeInMonths - 1)/r/n),2))
+            #print(regAmount * (((1 + r/n) ** (n*timeInMonths) - 1) / (r/n)) * (1+r/n))
+            #result += round(regAmount * (((1 + r/n) ** (n*t) - 1) / (r/n)) * (1+r/n), 2)
+
+            result += round(regAmount*(((1+r)**n - 1)/r),2)
+            
+            earningsFromRegular = regAmount * timeInMonths
+            interestGained = round(result - p - earningsFromRegular, 2)
+
+        else:
+            interestGained = round(result - p, 2)
+
+        print(result,interestGained)
+
         self.resultText.configure(state='normal')
         textForText = "You started with £" + p + "\n You ended with £" + result + "\n You gained £" + interestGained + "in interest"
         self.resultText.insert(tk.INSERT, text=textForText)
         self.resultText.configure(state='disabled')
         self.resultText.grid(sticky='W')
 
-
     def reset(self):
         self.regularAmount.set(0)
+        self.interestRate.set(0)
         self.timePeriod.set(0)
         self.initialAmount.set(0)
         self.timePeriodVar.set("years")
