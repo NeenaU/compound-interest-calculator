@@ -69,9 +69,9 @@ class interestCalculator():
 
         self.calculateButton = tk.Button(master, text="Calculate", command=self.verifyValues)
         self.calculateButton.grid(sticky='NW',pady=6)
-        self.resultText = tk.Text(master, state='disabled', width=37, height=3)
-        self.resultText.grid(sticky='W')
-        self.calculateAgainButton= tk.Button(master, text="Reset", command=self.reset)
+        self.resultText = tk.Text(master, state='disabled', width=37, height=6)
+        self.resultText.grid(sticky='NW',pady=6)
+        self.resetButton= tk.Button(master, text="Reset", command=self.reset)
 
     #checkRegularAmount, checkIncreaseDeposits and checkTimePeriod
     #add extra widgets onto the screen if the menuoption variable is yes
@@ -186,7 +186,7 @@ class interestCalculator():
 
     def calculateResult(self):
         self.calculateButton.grid_forget()
-        self.calculateAgainButton.grid(sticky='W',row=11,pady=6)
+        self.resetButton.grid(sticky='NW',row=11,pady=6)
 
         #Principal balance
         p = self.initialAmount.get()
@@ -213,42 +213,72 @@ class interestCalculator():
         #Calculate compound interest
         result = round(p * (1 + (r/n)) ** (n*t), 2)
 
-        interestGained = 0
         #Include amount made/lost from monthly deposits and calculate interest gained
+        interestGained = 0
         if self.regularAmountVar.get() == "yes":
+            d = self.regularAmount.get() #regular deposit amount
+            interestFromDeposits = round(d * (((1+(r/12))**(12*t)-1)/(r/12)) * (1+r/12),2)
+            result += interestFromDeposits
 
-            timeInMonths = t*12
-            d = self.regularAmount.get()
-            result += round(d * (((1+(r/12))**(12*t)-1)/(r/12)) * (1+r/12),2)
-            earningsFromRegular = d * timeInMonths
-            interestGained = round(result - p - earningsFromRegular, 2)
+            timeInMonths = 0
+            if self.timePeriodVar.get() == "years":
+                timeInMonths = t*12
+            else:
+                timeInMonths = t
+            
+            earningsFromDeposits = d * timeInMonths
+            interestGained = round(result - p - earningsFromDeposits, 2)
 
         else:
             interestGained = round(result - p, 2)
 
-        print(result,interestGained)
+        
+        if self.timePeriodVar.get() == "years":
+            textForResultText = "You started with £" + str(p) + "\nYou ended with £" + str(result) + " over " + str(t) + " years\nYou gained £" + str(interestGained) + " in interest"
+        else:
+            textForResultText = "You started with £" + str(p) + "\nYou ended with £" + str(result) + " over " + str(int(t*12)) + " months\nYou gained £" + str(interestGained) + " in interest"
+        
 
         self.resultText.configure(state='normal')
-        textForText = "You started with £" + p + "\n You ended with £" + result + "\n You gained £" + interestGained + "in interest"
-        self.resultText.insert(tk.INSERT, text=textForText)
+        self.resultText.insert(tk.INSERT, textForResultText)
+
+        if self.regularAmountVar.get() == "yes":
+            depositsText = "\nYou also deposited £" + str(earningsFromDeposits) + " \nYou earned £" + str(interestFromDeposits) + " in interest from \nyour deposits"
+            self.resultText.insert(tk.INSERT, depositsText)
+
         self.resultText.configure(state='disabled')
-        self.resultText.grid(sticky='W')
 
     def reset(self):
         self.regularAmount.set(0)
         self.interestRate.set(0)
         self.timePeriod.set(0)
         self.initialAmount.set(0)
+        
         self.timePeriodVar.set("years")
         self.compoundIntervalVar.set("yearly")
-        self.calculateButton.grid(row=13,sticky='W')
+        self.regularAmountVar.set("no")
+
+        self.resetButton.grid_forget()
+        self.calculateButton.grid(row=11,sticky='NW',pady=6)
+        
         self.resultText.configure(state='normal')
-        self.resultText.delete(1.0, END)
+        self.resultText.delete(1.0, tk.END)
         self.resultText.configure(state='disabled')
+        
+        
 
 def main():
     window = tk.Tk()
-    window.geometry("300x500")
+    
+    w = 300
+    h = 500
+    
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+    x = (screen_width/2) - (w/2)
+    y = (screen_height/2) - (h/2)
+    window.geometry('%dx%d+%d+%d' % (w, h, x, y))
+    
     generator = interestCalculator(window)
     window.mainloop()
 
